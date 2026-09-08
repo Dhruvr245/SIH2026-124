@@ -739,9 +739,20 @@
     .filter-input:focus, .filter-select:focus {
       border-color: var(--teal-primary);
     }
+
+    /* Polished prototype feedback */
+    .toast-stack { position: fixed; right: 18px; bottom: 18px; z-index: 500; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
+    .toast { min-width:280px; max-width:380px; background:#ffffff; border:1px solid var(--border-strong); border-left:4px solid var(--teal-primary); border-radius:8px; padding:11px 13px; box-shadow:var(--shadow-lg); animation:toastIn .2s ease-out; }
+    .toast-title { font-weight:800; font-size:12px; }
+    .toast-text { color:var(--text-muted); font-size:11.5px; margin-top:2px; }
+    @keyframes toastIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    @media (max-width: 1050px) { .sidebar { width:220px; } .stat-row { grid-template-columns:repeat(4,1fr); } .dashboard-split, .feed-grid { grid-template-columns:1fr; height:auto; } .map-container { min-height:520px; } }
+    @media (max-width: 720px) { body { overflow:auto; height:auto; } .app-container { height:auto; min-height:100vh; } .sidebar { width:190px; } .stat-row { grid-template-columns:repeat(2,1fr); } .pipeline-strip { overflow-x:auto; justify-content:flex-start; min-width:max-content; } .sub-header-actions { display:none; } .tab-content { padding:12px; } }
+    @media print { .top-badge-strip, .sidebar, .sub-header, .toast-stack { display:none !important; } .app-container, .main-workspace { height:auto !important; overflow:visible !important; } .tab-content { display:none !important; } #tab-reports { display:block !important; padding:0 !important; } body { background:#fff; } }
   </style>
 </head>
 <body>
+  <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
 
   <!-- Top Operational Banner -->
   <header class="top-badge-strip">
@@ -754,7 +765,7 @@
     <div style="display:flex; align-items:center; gap:14px;">
       <span id="system-time-display">Indore Municipal Operations (UTC+5:30)</span>
       <span style="display:inline-flex; align-items:center; gap:5px; color: var(--green-ok); font-weight: 600;">
-        <span class="dot" style="background: var(--green-ok);"></span> 18 AICTSL Bus Feeds Connected
+        <span class="dot" style="background: var(--green-ok);"></span> 18 simulated bus feeds active
       </span>
     </div>
   </header>
@@ -957,7 +968,7 @@
               <button class="map-ctrl-btn" title="Reset View" onclick="renderMap()">⌂</button>
             </div>
 
-            <!-- Highly Accurate Vector Layout of Indore Road System -->
+            <!-- Illustrative Vector Layout of Indore Road System -->
             <svg id="indore-gis-map" viewBox="0 0 800 520" style="width:100%; height:100%;">
               <!-- Background Map Landform -->
               <rect width="800" height="520" fill="#f8fafc" />
@@ -1041,7 +1052,7 @@
             </svg>
 
             <div class="map-legend">
-              <div class="legend-item"><span class="dot" style="background:#0f766e;"></span> AICTSL Public Bus</div>
+              <div class="legend-item"><span class="dot" style="background:#0f766e;"></span> Public Bus Feed</div>
               <div class="legend-item"><span class="dot" style="background:#b91c1c;"></span> Verified Pothole (P-104)</div>
               <div class="legend-item"><span class="dot" style="background:#b45309;"></span> Construction / Obstruction</div>
               <div class="legend-item"><span class="dot" style="background:#0284c7;"></span> BRTS Corridor Median</div>
@@ -1064,7 +1075,7 @@
       <!-- 2. LIVE BUS FLEET TAB -->
       <div id="tab-fleet" class="tab-content">
         <div style="margin-bottom:14px;">
-          <h3 style="font-size:15px; font-weight:700;">Municipal Bus Sensing Fleet (AICTSL Network)</h3>
+          <h3 style="font-size:15px; font-weight:700;">Municipal Bus Sensing Fleet (Demo Network)</h3>
           <p style="color:var(--text-muted); font-size:12px;">Bus cameras act as rolling spatial scanners executing lightweight edge models for road anomaly extraction.</p>
         </div>
 
@@ -1157,10 +1168,10 @@
             <div class="cam-hud-bottom">
               <div>
                 <span class="badge-pill" style="font-size:10px; background:#fff;">AI INFERENCE SIMULATION</span>
-                <span style="margin-left:8px; color:#cbd5e1; font-size:11px;">Model: Mobile-YOLO-UrbanRoad (Quantized INT8)</span>
+                <span style="margin-left:8px; color:#cbd5e1; font-size:11px;">Illustrative edge model output</span>
               </div>
               <div style="font-size:11px; font-family:monospace; color:#38bdf8;">
-                LATENCY: 29ms | GPS ACCURACY: 1.4m
+                SIMULATED LATENCY: 29ms | SIMULATED GPS ERROR: ±1.4m
               </div>
             </div>
           </div>
@@ -1218,7 +1229,7 @@
         <div style="margin-bottom:14px;">
           <h3 style="font-size:15px; font-weight:700;">Signature Innovation: Collaborative Multi-Bus Verification</h3>
           <p style="color:var(--text-muted); font-size:12px;">
-            Eliminating false alarms without manual human triage. When multiple independent buses on different schedules confirm the identical defect coordinate within an 8-meter window, confidence strengthens to verified status.
+            Reducing duplicate and low-confidence observations. When independent buses observe the same defect near the same location within the configured demo window, the evidence is grouped and confidence can strengthen.
           </p>
         </div>
 
@@ -1606,7 +1617,7 @@
               <h4>Safety Loop</h4>
             </div>
             <div class="panel-body" style="font-size:12px; color:var(--text-muted); line-height:1.5;">
-              By sharing bus-detected road hazards directly with following buses and commuter apps, transit operators prevent tire blowouts, two-wheeler skids, and sudden deceleration jams.
+              A future connected-alert workflow could share verified road hazards with fleet operators and road users. In this prototype, the broadcast is simulated.
             </div>
           </div>
         </div>
@@ -1617,7 +1628,7 @@
         <div style="margin-bottom:14px; display:flex; justify-content:space-between; align-items:center;">
           <div>
             <h3 style="font-size:15px; font-weight:700;">Automated Municipal Work Orders & Reports</h3>
-            <p style="color:var(--text-muted); font-size:12px;">Ready for Indore Municipal Corporation (IMC) Road Works & Maintenance Department.</p>
+            <p style="color:var(--text-muted); font-size:12px;">Designed for a municipal road-works workflow. All actions in this prototype are simulated.</p>
           </div>
           <button class="action-btn action-btn-primary" onclick="generateWorkOrderForIssue('P-104')">
             Generate Report For P-104
@@ -1771,7 +1782,7 @@
         blockages: "Road Encroachments, Hazards & Obstructions",
         issues: "Central Urban Issues Master Register",
         roadhealth: "Explainable Road Surface Health Scoring",
-        alerts: "Connected Vehicle Hazard Broadcast (V2X Sim)",
+        alerts: "Connected Road Hazard Alerts (Simulation)",
         reports: "Automated Municipal Authority Work Orders"
       };
       if (titleMap[tabId]) {
@@ -1809,7 +1820,7 @@
       mockBuses.forEach(bus => {
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         g.style.cursor = 'pointer';
-        g.onclick = () => alert(`AICTSL Bus Node: ${bus.id}\nRoute: ${bus.route}\nCurrent Velocity: ${bus.speed}\nEdge Camera: ${bus.cam}`);
+        g.onclick = () => showToast(`${bus.id} telemetry`, `${bus.route} • ${bus.speed} • Camera ${bus.cam}`);
 
         g.innerHTML = `
           <rect x="${bus.x - 7}" y="${bus.y - 7}" width="14" height="14" rx="3" fill="#0f766e" stroke="#ffffff" stroke-width="1.5" />
@@ -1954,7 +1965,7 @@
           <td><span style="color:var(--green-ok); font-size:11.5px; font-weight:600;">● ${b.cam}</span></td>
           <td>${b.lastObs}</td>
           <td>${b.detections}</td>
-          <td><span class="status-badge status-verified">GPS LOCK (±1.4m)</span></td>
+          <td><span class="status-badge status-verified">GPS LOCK • SIMULATED</span></td>
         </tr>
       `).join('');
     }
@@ -2035,21 +2046,21 @@
           </div>
 
           <div style="background:var(--bg-subtle); border:1px solid var(--border-subtle); border-radius:6px; padding:12px; margin-bottom:18px; font-size:12px;">
-            <strong style="color:var(--text-main);">Mandated Engineering Remediation:</strong>
+            <strong style="color:var(--text-main);">Recommended next action:</strong>
             <p style="color:var(--text-muted); margin-top:3px;">
-              Deploy Rapid Asphalt Repair Unit #04 to AB Road Corridor between Palasia and Geeta Bhawan. Execute perimeter sawing, tack-coat bonding, and hot-mix bitumen compaction within 24 hours.
+              Schedule a field inspection on the AB Road segment between Palasia and Geeta Bhawan. Prioritize verification of the reported surface defect and plan repair based on field assessment.
             </p>
           </div>
 
           <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-subtle); padding-top:14px;">
             <div style="font-size:11.5px; color:var(--text-dim);">
-              Status: <span style="color:var(--green-ok); font-weight:700;">Dispatched to IMC Road Cell (Ticket Created)</span>
+              Status: <span style="color:var(--amber); font-weight:700;">Simulation • Ready for municipal review</span>
             </div>
             <div style="display:flex; gap:8px;">
-              <button class="action-btn" onclick="alert('Simulated PDF Export: Work-Order-${issue.id}.pdf generated locally.')">
-                Download Official PDF
+              <button class="action-btn" onclick="window.print()">
+                Print / Save as PDF
               </button>
-              <button class="action-btn action-btn-primary" onclick="alert('Remediation status updated in Central Register.')">
+              <button class="action-btn action-btn-primary" onclick="showToast('Dispatch simulation', 'Inspection crew status updated in the demo register.');">
                 Mark Inspection Crew Dispatched
               </button>
             </div>
@@ -2061,8 +2072,26 @@
     // ==========================================
     // 7. SIMULATION TRIGGERS
     // ==========================================
+    function showToast(title, text) {
+      const stack = document.getElementById('toast-stack');
+      if (!stack) return;
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.innerHTML = `<div class="toast-title">${title}</div><div class="toast-text">${text}</div>`;
+      stack.appendChild(el);
+      setTimeout(() => { el.style.opacity='0'; el.style.transform='translateY(8px)'; el.style.transition='all .2s'; setTimeout(()=>el.remove(),220); }, 3200);
+    }
+
+    function updateSystemClock() {
+      const el = document.getElementById('system-time-display');
+      if (!el) return;
+      const now = new Date();
+      const time = now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true});
+      el.innerText = `Indore Municipal Operations • ${time} IST`;
+    }
+
     function triggerScanDetection() {
-      alert('Edge Inference Completed: Detected Pothole (94.2% Confidence) on BUS-31 feed. Telemetry packet sent to consensus queue.');
+      showToast('Detection complete', 'Pothole candidate detected on BUS-31. Evidence added to the verification queue.');
     }
 
     function simulateNewDetectionBatch() {
@@ -2090,14 +2119,14 @@
       } catch (e) {
         console.log('Web Audio ping completed');
       }
-      alert('CONNECTED CAB ALERT SOUNDED:\n"Caution: Pothole detected 350 meters ahead in current travel lane."');
+      showToast('Road-user alert simulated', 'Caution: pothole detected 350 m ahead on AB Road.');
     }
 
     // ==========================================
     // 8. 90-SECOND SIH JUDGE WALKTHROUGH
     // ==========================================
     function triggerQuickDemoWorkflow() {
-      alert("Starting 90-Second SIH Hackathon Demo Flow:\n\nStep 1: Accurate City Overview Map\nStep 2: AI Detection on BUS-31\nStep 3: Multi-Bus Deduplication (P-104)\nStep 4: Traffic Impact Link\nStep 5: Authority Report & Hazard Alert");
+      showToast('90-second demo started', 'Follow the highlighted flow: detection → verification → traffic impact → authority action.');
 
       switchTab('overview');
       selectIssue('P-104');
@@ -2125,6 +2154,9 @@
       populateIssuesTable();
       selectIssue('P-104');
       setInterval(animateBusesSlightly, 4500);
+      updateSystemClock();
+      setInterval(updateSystemClock, 1000);
+      setTimeout(() => showToast('UrbanSense AI ready', 'Demo environment loaded with simulated Indore fleet telemetry.'), 700);
     });
   </script>
 </body>
